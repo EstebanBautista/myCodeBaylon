@@ -64,32 +64,104 @@
         var sceneToRender = null;
         var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
         var createScene = function () {
-    // This creates a basic Babylon Scene object (non-mesh)
     var scene = new BABYLON.Scene(engine);
 
-    // This creates and positions a free camera (non-mesh)
-    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
-
-    // This targets the camera to scene origin
-    camera.setTarget(BABYLON.Vector3.Zero());
-
-    // This attaches the camera to the canvas
+    
+    var camera = new BABYLON.ArcRotateCamera("camera", Math.PI / 2, Math.PI / 3, 15, BABYLON.Vector3.Zero(), scene);
     camera.attachControl(canvas, true);
 
-    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+   
     var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+    light.intensity = 0.8;
+    
+  
+    var baseMaterial = new BABYLON.StandardMaterial("baseMat", scene);
+    baseMaterial.diffuseTexture = new BABYLON.Texture("https://i.imgur.com/Wk1cGEq.png", scene);
+    baseMaterial.bumpTexture = new BABYLON.Texture("https://i.imgur.com/wGyk6os.png", scene);
 
-    // Default intensity is 1. Let's dim the light a small amount
-    light.intensity = 0.7;
 
-    // Our built-in 'sphere' shape.
-    var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 32}, scene);
+    var baseURL = "https://estebanbautista.github.io/myCodeBaylon/mallas/";
 
-    // Move the sphere upward 1/2 its height
-    sphere.position.y = 1;
+    
+BABYLON.SceneLoader.ImportMesh("", baseURL, "local_menos_pesado.glb", scene, function (meshes) {
+    let local = meshes[0];
+    local.position = new BABYLON.Vector3(0, -1, 0);
+    local.scaling = new BABYLON.Vector3(5, 5, 5);
 
-    // Our built-in 'ground' shape.
-    var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
+    
+    let localMaterial = new BABYLON.StandardMaterial("localMat", scene);
+    localMaterial.diffuseTexture = new BABYLON.Texture("https://i.imgur.com/Wk1cGEq.png", scene); 
+    localMaterial.bumpTexture = new BABYLON.Texture("https://i.imgur.com/wGyk6os.png", scene);  
+
+    
+    localMaterial.bumpTexture.level = 2.0; 
+
+    local.material = localMaterial;
+    
+    console.log("Local con normal map cargado correctamente");
+});
+
+
+
+BABYLON.SceneLoader.ImportMesh("", baseURL, "perro_argentino.glb", scene, function (meshes) {
+    let perro = meshes[0];
+    perro.position = new BABYLON.Vector3(-20, -1.5, 20);
+    perro.scaling = new BABYLON.Vector3(50, 50, 50);
+    perro.rotation.y = Math.PI / 2;
+
+    
+    let perroMaterial = new BABYLON.StandardMaterial("perroMat", scene);
+    perroMaterial.diffuseTexture = new BABYLON.Texture("https://i.imgur.com/Wk1cGEq.png", scene);
+    perroMaterial.bumpTexture = new BABYLON.Texture("https://i.imgur.com/wGyk6os.png", scene);  
+    perroMaterial.bumpTexture.level = 5.0;  
+    perroMaterial.specularPower = 50; 
+
+    perro.material = perroMaterial;
+    perro.receiveShadows = true;
+
+    
+});
+
+
+    BABYLON.SceneLoader.ImportMesh("", baseURL, "tumba.glb", scene, function (meshes) {
+        let tumba = meshes[0];
+        tumba.position = new BABYLON.Vector3(25, -0.5, 18);
+        tumba.scaling = new BABYLON.Vector3(-1.5, 1.5, 1.3);
+        tumba.material = baseMaterial;
+        console.log("Tumba cargada correctamente");
+    });
+
+    BABYLON.SceneLoader.ImportMeshAsync("", baseURL, "Vase_Clay.glb", scene).then((result) => {
+        let maceta = result.meshes[1];
+        maceta.position = new BABYLON.Vector3(0, -0.5, 20); 
+        maceta.rotation = new BABYLON.Vector3(0, 0, 0); 
+        maceta.scaling = new BABYLON.Vector3(2, 2, 2); 
+        maceta.material = baseMaterial;
+    });
+    
+    BABYLON.SceneLoader.ImportMesh("", baseURL, "pistola_9mm.glb", scene, function (meshes) {
+        let pistola = meshes[0];
+        pistola.position = new BABYLON.Vector3(10, 0, 15);
+        pistola.scaling = new BABYLON.Vector3(20, 20, 20);
+        pistola.rotation.y = Math.PI / 4;
+
+        
+        let pistolaMaterial = new BABYLON.StandardMaterial("pistolaMat", scene);
+        pistolaMaterial.diffuseTexture = new BABYLON.Texture("https://i.imgur.com/Wk1cGEq.png", scene); 
+        pistolaMaterial.bumpTexture = new BABYLON.Texture("https://i.imgur.com/wGyk6os.png", scene); 
+        pistolaMaterial.bumpTexture.level = 3.0;  
+        pistolaMaterial.specularPower = 100; 
+
+        pistola.material = pistolaMaterial;
+
+        
+    });
+
+  
+
+
+
+
 
     return scene;
 };
